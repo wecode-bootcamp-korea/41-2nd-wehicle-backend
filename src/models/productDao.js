@@ -84,4 +84,20 @@ const getProductList = async (offset, limit, sort, filterOptions) => {
   );
 };
 
-module.exports = { getProductList };
+const getSearchProducts = async (keyword, offset, limit) => {
+  return await appDataSource.query(
+    `SELECT
+    p.car_id,
+    p.thumbnail,
+    p.price,
+    p.id,
+    c.name
+    FROM
+    products p
+    JOIN cars c ON p.car_id = c.id
+    WHERE c.name LIKE "%${keyword}%"
+    LIMIT ${limit} OFFSET ${offset}`
+  );
+};
+
+module.exports = { getProductList, getSearchProducts };

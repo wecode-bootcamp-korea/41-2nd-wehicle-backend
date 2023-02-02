@@ -5,5 +5,8 @@ const getProductList = asyncErrorHandler(async (req, res) => {
   const result = await productService.getProductList(req.query);
   return res.status(200).json({ data: result });
 });
-
-module.exports = { getProductList };
+const getSearchProducts = asyncErrorHandler(async (req, res) => {
+  const result = await productService.getSearchProducts(req.query);
+  return res.status(200).json({ data: result });
+});
+module.exports = { getProductList, getSearchProducts };
