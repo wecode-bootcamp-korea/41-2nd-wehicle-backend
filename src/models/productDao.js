@@ -100,4 +100,104 @@ const getSearchProducts = async (keyword, offset, limit) => {
   );
 };
 
-module.exports = { getProductList, getSearchProducts };
+const getProductDetail = async (productId) => {
+  const [productDetail] = await appDataSource.query(
+    `SELECT
+      p.id,
+      b.name                                  AS brandName,
+      c.id                                    AS carId,
+      p.price                                 AS sellingPrice,
+      c.name                                  AS carName,
+      p.year                                  AS year,
+      p.mileage                               AS mileage,
+      p.thumbnail                             AS thumbnail,
+      JSON_ARRAYAGG(
+        pi.image_url
+      ) AS images,
+      options.options,
+      top3.biddingPrice
+    FROM products p
+    JOIN cars c ON p.car_id = c.id
+    JOIN brands b ON c.brand_id = b.id
+    JOIN product_options po ON p.id = po.product_id
+    JOIN product_images pi ON p.id = pi.product_id
+
+    RIGHT JOIN (
+      SELECT
+        p.id,
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'sunroof', po.sunroof,
+            'backcamera', po.backcamera,
+            'parkingsensor', po.parkingsensor,
+            'heatingseat', po.heatingseat,
+            'navi', po.navi,
+            'smartkey', po.smartkey,
+            'coolingseat', po.coolingseat,
+            'leatherseat', po.leatherseat
+          )
+        )                                      AS options
+      FROM product_options po
+      INNER JOIN products p ON po.product_id = p.id
+      WHERE p.id = ${productId}
+      GROUP BY p.id
+    ) AS options ON options.id = p.id
+    
+    RIGHT JOIN (
+      SELECT
+        A.id,
+        JSON_ARRAYAGG(A.price)                 AS biddingPrice
+        FROM (
+          SELECT 
+            p.id, 
+            bd.price
+          FROM 
+            biddings bd
+          INNER JOIN products p ON p.id = bd.product_id 
+          WHERE p.id = ${productId}
+          ORDER BY bd.price DESC LIMIT 3
+        ) AS A 
+        GROUP BY A.id
+      ) AS top3 ON top3.id = p.id
+    WHERE p.id = ${productId}
+    GROUP BY p.id;`
+  );
+
+  return productDetail;
+};
+
+const getProductMarketPrice = async (carId, period, year) => {
+  const andPeriod = period
+    ? `AND o.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -${period} MONTH) AND NOW()`
+    : ``;
+  const andYear = year ? `AND p.year = ${year}` : "";
+
+  const productMarketPrice = await appDataSource.query(
+    `SELECT
+      c.id,
+      JSON_ARRAYAGG(
+        JSON_OBJECT(
+        'x', DATE_FORMAT(o.created_at, '%Y/%m/%d'),
+        'y', o.deal_price
+        )
+      ) AS data
+    FROM orders o
+    JOIN biddings b ON o.bidding_id = b.id
+    JOIN products p on b.product_id = p.id
+    JOIN cars c ON p.car_id = c.id
+    WHERE c.id = ${carId}
+    ${andPeriod}
+    ${andYear}
+    ORDER BY o.created_at;
+    `
+  );
+
+  return productMarketPrice;
+};
+
+module.exports = {
+  getProductList,
+  getProductDetail,
+  getProductMarketPrice,
+  getSearchProducts,
+};
