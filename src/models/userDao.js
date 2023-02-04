@@ -32,7 +32,20 @@ const createUser = async (socialId, email, nickname, socialTypeId) => {
   );
 };
 
+const updateUserInfo = async (userId, address, phoneNumber) => {
+  return appDataSource.query(
+    `UPDATE
+      users
+    SET 
+      address = ?, phone_number = ?
+    WHERE
+      id = ?`,
+    [address, phoneNumber, userId]
+  );
+};
+
 module.exports = {
   getUserInfo,
   createUser,
+  updateUserInfo,
 };
