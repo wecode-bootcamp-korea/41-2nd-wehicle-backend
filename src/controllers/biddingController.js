@@ -1,6 +1,16 @@
 const biddingService = require("../services/biddingService");
 const { asyncErrorHandler, throwCustomError } = require("../utils/error");
 
+const getBidHistory = asyncErrorHandler(async (req, res) => {
+  const bidHistory = await biddingService.getBidHistory(req.userId);
+  return res.status(200).json({ bidHistory });
+});
+
+const getSellHistory = asyncErrorHandler(async (req, res) => {
+  const sellHistory = await biddingService.getSellHistory(req.userId);
+  return res.status(200).json({ sellHistory });
+});
+
 const createBid = asyncErrorHandler(async (req, res) => {
   const { productId, price } = req.body;
 
@@ -118,6 +128,8 @@ const deleteSell = asyncErrorHandler(async (req, res) => {
 });
 
 module.exports = {
+  getBidHistory,
+  getSellHistory,
   createBid,
   createSell,
   updateBid,

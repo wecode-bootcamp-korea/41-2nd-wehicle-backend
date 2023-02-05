@@ -80,6 +80,16 @@ const kakaoLogin = async (authCode) => {
   }
 };
 
+const getUserData = async (userId) => {
+  return await userDao.getUserData(userId);
+};
+
+const updateUserInfo = async (userId, address, phoneNumber) => {
+  return await userDao.updateUserInfo(userId, address, phoneNumber);
+};
+
 module.exports = {
   kakaoLogin,
+  getUserData,
+  updateUserInfo,
 };
