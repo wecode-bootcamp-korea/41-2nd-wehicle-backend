@@ -1,6 +1,21 @@
 const biddingDao = require("../models/biddingDao");
 const userDao = require("../models/userDao");
 
+const getBidHistory = async (userId) => {
+  const biddingHistory = await biddingDao.getBiddingHistory(userId);
+  const failedBidHistory = await biddingDao.getFailedBidHistory(userId);
+  const purchasedHistory = await biddingDao.getpurchasedHistory(userId);
+
+  return { biddingHistory, failedBidHistory, purchasedHistory };
+};
+
+const getSellHistory = async (userId) => {
+  const onSaleHistory = await biddingDao.getOnsaleHistory(userId);
+  const soldOutHistory = await biddingDao.getSoldOutHistory(userId);
+
+  return { onSaleHistory, soldOutHistory };
+};
+
 const createBid = async (userId, productId, price) => {
   return await biddingDao.createBid(userId, productId, price);
 };
@@ -65,6 +80,8 @@ const deleteSell = async (userId, productId) => {
 };
 
 module.exports = {
+  getBidHistory,
+  getSellHistory,
   createBid,
   createSell,
   updateBid,

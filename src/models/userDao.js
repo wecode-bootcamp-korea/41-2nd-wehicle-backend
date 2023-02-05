@@ -32,6 +32,21 @@ const createUser = async (socialId, email, nickname, socialTypeId) => {
   );
 };
 
+const getUserData = async (userId) => {
+  const [userData] = await appDataSource.query(
+    `SELECT
+      nickname,
+      points
+    FROM 
+      users
+    WHERE
+      id = ?`,
+    [userId]
+  );
+
+  return userData;
+};
+
 const updateUserInfo = async (userId, address, phoneNumber) => {
   return appDataSource.query(
     `UPDATE
@@ -47,5 +62,6 @@ const updateUserInfo = async (userId, address, phoneNumber) => {
 module.exports = {
   getUserInfo,
   createUser,
+  getUserData,
   updateUserInfo,
 };
