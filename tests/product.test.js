@@ -118,24 +118,24 @@ describe("PRODUCT API", () => {
     const orderArr = [
       {
         bidding_id: 4,
+        product_id: 1,
         delivery_date: "20220202",
         order_status_id: 2,
         deal_price: 40000000,
-        created_at: "20220202",
       },
       {
         bidding_id: 5,
+        product_id: 3,
         delivery_date: "20220202",
         order_status_id: 2,
         deal_price: 30000000,
-        created_at: "20220202",
       },
       {
         bidding_id: 6,
+        product_id: 2,
         delivery_date: "20220202",
         order_status_id: 3,
         deal_price: 50000000,
-        created_at: "20220202",
       },
     ];
 
