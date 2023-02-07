@@ -2,12 +2,20 @@ const productDao = require("../models/productDao");
 const { throwCustomError } = require("../utils/error");
 
 const getProductList = async (params) => {
-  const { offset = 0, limit = 8, sort = "lastest", ...filterOptions } = params;
-  return await productDao.getProductList(offset, limit, sort, filterOptions);
-};
-const getSearchProducts = async (query) => {
-  const { offset = 0, limit = 8, keyword } = query;
-  return productDao.getSearchProducts(keyword, offset, limit);
+  const {
+    offset = 0,
+    limit = 8,
+    sort = "lastest",
+    keyword,
+    ...filterOptions
+  } = params;
+  return await productDao.getProductList(
+    offset,
+    limit,
+    sort,
+    keyword,
+    filterOptions
+  );
 };
 
 const getProductDetail = async (productId, query) => {
@@ -26,4 +34,4 @@ const getProductDetail = async (productId, query) => {
   return { productDetail, productMarketPrice };
 };
 
-module.exports = { getProductList, getSearchProducts, getProductDetail };
+module.exports = { getProductList, getProductDetail };

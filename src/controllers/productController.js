@@ -6,11 +6,6 @@ const getProductList = asyncErrorHandler(async (req, res) => {
   return res.status(200).json({ data: result });
 });
 
-const getSearchProducts = asyncErrorHandler(async (req, res) => {
-  const result = await productService.getSearchProducts(req.query);
-  return res.status(200).json({ data: result });
-});
-
 const getProductDetail = asyncErrorHandler(async (req, res) => {
   const { productId } = req.params;
   const queryParams = req.query;
@@ -22,4 +17,4 @@ const getProductDetail = asyncErrorHandler(async (req, res) => {
   return res.status(200).json({ data: productDetail });
 });
 
-module.exports = { getProductList, getSearchProducts, getProductDetail };
+module.exports = { getProductList, getProductDetail };
