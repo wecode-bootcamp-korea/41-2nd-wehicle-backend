@@ -1,7 +1,8 @@
 const { appDataSource } = require("./appDataSource");
 const { betweenClause, forClause } = require("../utils/queryModules");
 
-const getProductList = async (offset, limit, sort, filterOptions) => {
+const getProductList = async (offset, limit, sort, keyword, filterOptions) => {
+  const searchClause = keyword ? `AND c.name LIKE "%${keyword}%"` : "";
   const sortMethod = Object.freeze({
     cheap: "p.price ASC",
     expensive: "p.price DESC",
@@ -78,25 +79,10 @@ const getProductList = async (offset, limit, sort, filterOptions) => {
       ${andBetweenYear}
       ${andBetweenMileage}
       ${andBetweenPrice}
+      ${searchClause}
       ORDER BY ${sortMethod[sort]}
       LIMIT ${limit} OFFSET ${offset} 
       `
-  );
-};
-
-const getSearchProducts = async (keyword, offset, limit) => {
-  return await appDataSource.query(
-    `SELECT
-    p.car_id,
-    p.thumbnail,
-    p.price,
-    p.id,
-    c.name
-    FROM
-    products p
-    JOIN cars c ON p.car_id = c.id
-    WHERE c.name LIKE "%${keyword}%"
-    LIMIT ${limit} OFFSET ${offset}`
   );
 };
 
@@ -199,5 +185,4 @@ module.exports = {
   getProductList,
   getProductDetail,
   getProductMarketPrice,
-  getSearchProducts,
 };
