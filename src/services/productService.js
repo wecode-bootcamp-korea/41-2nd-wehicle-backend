@@ -5,7 +5,7 @@ const getProductList = async (params) => {
   const {
     offset = 0,
     limit = 8,
-    sort = "lastest",
+    sort = "expensive",
     keyword,
     ...filterOptions
   } = params;
