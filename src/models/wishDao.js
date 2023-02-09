@@ -3,11 +3,19 @@ const { appDataSource } = require("./appDataSource");
 const getWishList = async (userId) => {
   return appDataSource.query(
     `SELECT
-    user_id,
-    product_id
+    p.id as productId,
+    p.thumbnail,
+    b.name as brandName,
+    c.name as carName,
+    p.price as price
     FROM
-    wishlists
-    WHERE user_id = ?
+    wishlists w
+    JOIN products p ON w.product_id = p.id
+    JOIN cars c ON c.id = p.car_id
+    JOIN brands b ON b.id = c.brand_id
+    LEFT JOIN orders o ON o.product_id = p.id
+    WHERE o.id IS NULL
+    AND w.user_id = ?
     `,
     [userId]
   );
