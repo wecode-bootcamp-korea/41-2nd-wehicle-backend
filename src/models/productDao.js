@@ -60,6 +60,7 @@ const getProductList = async (offset, limit, sort, keyword, filterOptions) => {
 
   return await appDataSource.query(
     `SELECT
+        p.id,
         c.id        AS carId,
         c.name      AS carName,
         c.thumbnail AS mainThumbnailImage,
