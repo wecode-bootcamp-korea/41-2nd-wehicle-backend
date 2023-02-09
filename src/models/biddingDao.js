@@ -46,8 +46,8 @@ const getFailedBidHistory = async (userId) => {
     JOIN products p ON p.id = b.product_id
     JOIN cars c ON c.id = p.car_id
     JOIN brands br ON br.id = c.brand_id
-    WHERE b.user_id = 1
-    AND p.id  IN 
+    WHERE b.user_id = ?
+    AND p.id IN 
       (SELECT 
         product_id 
       FROM 
@@ -58,7 +58,7 @@ const getFailedBidHistory = async (userId) => {
       FROM 
         orders);
   `,
-    [userId, userId]
+    [userId]
   );
 };
 
@@ -70,7 +70,7 @@ const getpurchasedHistory = async (userId) => {
       br.name         AS brandName,
       c.name          AS carName,
       p.thumbnail,
-      pm.total_price  AS finalPrice
+      o.deal_price    AS finalPrice
     FROM 
       orders o
     LEFT JOIN payments pm ON pm.order_id = o.id 
@@ -85,7 +85,7 @@ const getpurchasedHistory = async (userId) => {
 
 const getOnsaleHistory = async (userId) => {
   return appDataSource.query(
-    `SELECT
+    `SELECT DISTINCT
       p.id            AS productId,
       br.name         AS brandName,
       c.name          AS carName,
@@ -110,7 +110,7 @@ const getOnsaleHistory = async (userId) => {
 
 const getSoldOutHistory = async (userId) => {
   return appDataSource.query(
-    `SELECT
+    `SELECT DISTINCT
       p.id            AS productId,
       br.name         AS brandName,
       c.name          AS carName,
